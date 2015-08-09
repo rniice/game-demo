@@ -16,7 +16,7 @@ var paddle_speed = 10
 var ball_size = 20
 var ball_trajectory = randomDirection()
 var ball_speed = 2
-var ball_acceleration = 1
+var ball_acceleration = 0.02
 
 var score = 0
 
@@ -106,35 +106,56 @@ function updateBall() {
   var top_paddle_bounds = paddleBounds("TOP")
   var rhs_paddle_bounds = paddleBounds("RHS")
 
-  var strike_paddle
-
   for (var i = 0; i < ball_corners.length; i++){
-
     if(insideRegion(ball_corners[i],player_paddle_bounds)){
-      strike_paddle="PLAYER"
-      alert("hit the ball!")
+      updateBallTrajectory("PLAYER")
+      updateBallSpeed()
     }
     else if (insideRegion(ball_corners[i],lhs_paddle_bounds)){
-      strike_paddle="LHS"
-
+      updateBallTrajectory("LHS")
+      updateBallSpeed()
     }
     else if (insideRegion(ball_corners[i],top_paddle_bounds)){
-      strike_paddle="TOP"
+      updateBallTrajectory("TOP")
+      updateBallSpeed()
     }    
     else if (insideRegion(ball_corners[i],rhs_paddle_bounds)){
-      strike_paddle="RHS"
+      updateBallTrajectory("RHS")
+      updateBallSpeed()
     }
-    else {
-      strike_paddle="NONE"
+    else {  //no hit
+
     }
   }
 
-  if(strike_paddle==="NONE"){
-    ball_x += ball_trajectory[0] * ball_speed
-    ball_y += ball_trajectory[1] * ball_speed 
-  }
+  updateBallPosition()    //continue in same direction, only accelerate if made strike
 
-  //continue in same direction, only accelerate if made strike
+}
+
+
+function updateBallPosition(){
+  ball_x += ball_trajectory[0] * ball_speed
+  ball_y += ball_trajectory[1] * ball_speed
+}
+
+function updateBallSpeed(){
+  ball_speed *= (1+ball_acceleration)
+}
+
+function updateBallTrajectory(paddle){
+
+  if(paddle==="PLAYER"){
+    ball_trajectory[1] *= -1
+  }
+  else if(paddle==="LHS"){
+    ball_trajectory[0] *= -1
+  }
+  else if(paddle==="TOP"){
+    ball_trajectory[1] *= -1
+  }
+  else if(paddle==="RHS"){
+    ball_trajectory[0] *=-1
+  }
 
 }
 

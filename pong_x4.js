@@ -1,12 +1,24 @@
 ;(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 var shell = require("../shell")()
 
+
+//add in point in poly to check if the feature bounds lie within another feature bounds.
+//alert(insideRegion([1,3],[[0,0],[0,2],[2,2],[2,0],[0,0]]))
+
 var game_size_x = 800
 var game_size_y = 800
 
 var paddle_width = 100
 var paddle_depth = 20
+
+var paddle_speed = 10
+
+var ball_size = 20
+var ball_trajectory = randomDirection()
+var ball_speed = 2
 var ball_acceleration = 1
+
+var score = 0
 
 var context
   , ball_x = game_size_x/2
@@ -25,6 +37,7 @@ shell.bind("move-left", "left", "A")
 shell.bind("move-right", "right", "D")
 shell.bind("move-up", "up", "W")
 shell.bind("move-down", "down", "S")
+shell.bind("pause", "spacebar")
 
 //Fired when document is loaded
 shell.on("init", function() {
@@ -39,10 +52,10 @@ shell.on("init", function() {
 //Fired once per game tick
 shell.on("tick", function() {
   if(shell.down("move-left")) {
-    player_x -= 1
+    player_x -= paddle_speed
   }
   if(shell.down("move-right")) {
-    player_x += 1
+    player_x += paddle_speed
   }
   /*if(shell.down("move-up")) {
     player_y -= 1
@@ -50,6 +63,15 @@ shell.on("tick", function() {
   if(shell.down("move-down")) {
     player_y += 1
   }*/
+  if(shell.down("pause")){
+    //suspend movement//alert
+    //alert('paused!')
+  }
+
+  updateBall()
+
+  updateComputerPaddles()
+
 })
 
 //Render a frame
@@ -58,7 +80,7 @@ shell.on("render", function(frame_time) {
   context.fillRect(0, 0, game_size_x, game_size_y)
   
   context.fillStyle = "#fff"
-  context.fillRect(ball_x-10, ball_y-10, 20, 20)
+  context.fillRect(ball_x-ball_size/2, ball_y-ball_size/2, ball_size, ball_size)
 
   context.fillStyle = "#ccc"
   context.fillRect(player_x-paddle_width/2, player_y-paddle_depth, paddle_width, paddle_depth)
@@ -73,6 +95,143 @@ shell.on("render", function(frame_time) {
   context.fillRect(computer_RHS_x-paddle_depth, computer_RHS_y-paddle_width/2, paddle_depth, paddle_width)
 
 })
+
+
+//define the motion of the ball
+function updateBall() {
+  var ball_corners = ballBounds()
+
+  var player_paddle_bounds = paddleBounds("PLAYER")
+  var lhs_paddle_bounds = paddleBounds("LHS")
+  var top_paddle_bounds = paddleBounds("TOP")
+  var rhs_paddle_bounds = paddleBounds("RHS")
+
+  var strike_paddle
+
+  for (var i = 0; i < ball_corners.length; i++){
+
+    if(insideRegion(ball_corners[i],player_paddle_bounds)){
+      strike_paddle="PLAYER"
+      alert("hit the ball!")
+    }
+    else if (insideRegion(ball_corners[i],lhs_paddle_bounds)){
+      strike_paddle="LHS"
+
+    }
+    else if (insideRegion(ball_corners[i],top_paddle_bounds)){
+      strike_paddle="TOP"
+    }    
+    else if (insideRegion(ball_corners[i],rhs_paddle_bounds)){
+      strike_paddle="RHS"
+    }
+    else {
+      strike_paddle="NONE"
+    }
+  }
+
+  if(strike_paddle==="NONE"){
+    ball_x += ball_trajectory[0] * ball_speed
+    ball_y += ball_trajectory[1] * ball_speed 
+  }
+
+  //continue in same direction, only accelerate if made strike
+
+}
+
+
+function updateComputerPaddles(){
+  computer_LHS_y += 1 * paddle_speed
+  computer_TOP_x += 1 * paddle_speed
+  computer_RHS_y += 1 * paddle_speed
+}
+
+
+function ballBounds(){
+  var result =[]
+
+  var corner_1 = [ball_x - 0.5 * ball_size, ball_y + 0.5 * ball_size]
+  var corner_2 = [ball_x - 0.5 * ball_size, ball_y - 0.5 * ball_size]
+  var corner_3 = [ball_x + 0.5 * ball_size, ball_y - 0.5 * ball_size]
+  var corner_4 = [ball_x - 0.5 * ball_size, ball_y - 0.5 * ball_size]
+
+  result = [corner_1, corner_2, corner_3, corner_4]
+
+  return result
+}
+
+
+function paddleBounds(paddle){
+  var result =[]
+
+  if(paddle==="LHS"){
+    var corner_1 = [computer_LHS_x, computer_LHS_y + 0.5 * paddle_width]
+    var corner_2 = [computer_LHS_x, computer_LHS_y - 0.5 * paddle_width]
+    var corner_3 = [computer_LHS_x + paddle_depth, computer_LHS_y - 0.5 * paddle_width]
+    var corner_4 = [computer_LHS_x + paddle_depth, computer_LHS_y + 0.5 * paddle_width]
+  }
+
+  else if(paddle==="TOP"){
+    var corner_1 = [computer_TOP_x - 0.5 * paddle_width, computer_TOP_y + paddle_depth]
+    var corner_2 = [computer_TOP_x - 0.5 * paddle_width, computer_TOP_y]
+    var corner_3 = [computer_TOP_x + 0.5 * paddle_width, computer_TOP_y]
+    var corner_4 = [computer_TOP_x + 0.5 * paddle_width, computer_TOP_y + paddle_depth]
+
+  }
+
+  else if(paddle==="RHS"){
+    var corner_1 = [computer_RHS_x - paddle_depth, computer_RHS_y + 0.5 * paddle_width]
+    var corner_2 = [computer_RHS_x - paddle_depth, computer_RHS_y - 0.5 * paddle_width]
+    var corner_3 = [computer_RHS_x, computer_RHS_y - 0.5 * paddle_width]
+    var corner_4 = [computer_RHS_x, computer_RHS_y + 0.5 * paddle_width]
+  }
+
+  else {                    //calculate the player bounds
+    var corner_1 = [player_x - 0.5 * paddle_width, player_y]
+    var corner_2 = [player_x - 0.5 * paddle_width, player_y - paddle_depth]
+    var corner_3 = [player_x + 0.5 * paddle_width, player_y - paddle_depth]
+    var corner_4 = [player_x + 0.5 * paddle_width, player_y + paddle_depth]
+
+  }
+
+
+  result = [corner_1, corner_2, corner_3, corner_4, corner_1]
+
+  return result
+}
+
+
+function randomDirection () {
+  var x_dir = Math.random()*2 - 1
+  var y_dir = Math.random()*2 - 1
+
+  var magnitude = Math.sqrt(x_dir*x_dir + y_dir*y_dir)
+
+  x_dir = x_dir / magnitude
+  y_dir = y_dir / magnitude
+
+  return [x_dir, y_dir]
+}
+
+
+function insideRegion(point, polygon) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+    
+    var x = point[0], y = point[1];
+    
+    var inside = false;
+    for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        var xi = polygon[i][0], yi = polygon[i][1];
+        var xj = polygon[j][0], yj = polygon[j][1];
+        
+        var intersect = ((yi > y) != (yj > y))
+            && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+    
+    return inside;
+}
+
 
 },{"../shell":2}],3:[function(require,module,exports){
 // shim for using process in browser

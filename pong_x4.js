@@ -184,7 +184,7 @@ function updateComputerPaddles(){
 
 function updateBallColor(condition){
   if(condition === "END"){
-    ball_color = "#00f"  //change to color of winning player from round
+    //ball_color = "#00f"  //change to color of winning player from round
   }
 
   if(condition === "PLAYER"){
@@ -229,6 +229,7 @@ function updateBallTrajectory(_event){
   else if(_event==="END") {
     ball_trajectory[0] = 0
     ball_trajectory[1] = 0
+    updateScore()
   }
 
 }
@@ -240,8 +241,18 @@ function activePaddle(player){
 
 
 function updateScore(){
-
-
+  if(active_paddle==="PLAYER"){
+    score[0]++
+  }
+  if(active_paddle==="LHS"){
+    score[1]++
+  }
+  if(active_paddle==="TOP"){
+    score[2]++
+  }
+  if(active_paddle==="RHS"){
+    score[3]++
+  }
 
 }
 

@@ -1,20 +1,24 @@
 ;(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 var shell = require("../shell")()
 
-var paddle_width = 200
+var game_size_x = 800
+var game_size_y = 800
+
+var paddle_width = 100
 var paddle_depth = 20
+var ball_acceleration = 1
 
 var context
-  , ball_x = 250
-  , ball_y = 250
-  , player_x = 250
-  , player_y = 500
+  , ball_x = game_size_x/2
+  , ball_y = game_size_y/2
+  , player_x = game_size_x/2
+  , player_y = game_size_y
   , computer_LHS_x = 0
-  , computer_LHS_y = 250
-  , computer_TOP_x = 250
+  , computer_LHS_y = game_size_y/2
+  , computer_TOP_x = game_size_x/2
   , computer_TOP_y = 0
-  , computer_RHS_x = 500
-  , computer_RHS_y = 250  
+  , computer_RHS_x = game_size_x
+  , computer_RHS_y = game_size_y/2  
 
 //Bind keyboard commands
 shell.bind("move-left", "left", "A")
@@ -25,8 +29,8 @@ shell.bind("move-down", "down", "S")
 //Fired when document is loaded
 shell.on("init", function() {
   var canvas = document.createElement("canvas")
-  canvas.width = 500
-  canvas.height = 500
+  canvas.width = game_size_x
+  canvas.height = game_size_y
   document.body.appendChild(canvas)
   context = canvas.getContext("2d")
 
@@ -40,18 +44,18 @@ shell.on("tick", function() {
   if(shell.down("move-right")) {
     player_x += 1
   }
-  if(shell.down("move-up")) {
+  /*if(shell.down("move-up")) {
     player_y -= 1
   }
   if(shell.down("move-down")) {
     player_y += 1
-  }
+  }*/
 })
 
 //Render a frame
 shell.on("render", function(frame_time) {
   context.fillStyle = "#000"
-  context.fillRect(0, 0, 500, 500)
+  context.fillRect(0, 0, game_size_x, game_size_y)
   
   context.fillStyle = "#fff"
   context.fillRect(ball_x-10, ball_y-10, 20, 20)

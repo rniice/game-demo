@@ -3,26 +3,18 @@ var shell = require("../shell")()
 
 
 //acceleration of ball after strike:            implemented
-
 //spin of ball after strike (at strike_speed):  not implemented
-
-//function that varies the color of ball
-
-//change the ball to a circular shape and get bounds
-
-//when ball exits range toggle score event
-
-//paddle that strikes before a miss event gets a point
-
-//render the ball in multiple chunks for animated ball effect
-
-//add a timer tracker to the top.
-//ad a score tracker to the top.
+//change the ball to a circular shape and get bounds:  not implemented
+//display score in html using jqery:  not implemented
+//render the ball in multiple chunks for animated ball effect:  not implemented
+//add a timer tracker to the top.:  not implemented
+//ad a score tracker to the top.:  not implemented
 
 
-var game_size_x = 400
-var game_size_y = 400
+var game_size_x = 300
+var game_size_y = 300
 var game_bounds = gameBounds()
+var game_state = "RUNNING"
 
 var player_color = "#444"
 var lhs_color = "#a00"
@@ -30,11 +22,11 @@ var top_color = "#0a0"
 var rhs_color = "#00a"
 
 
-var paddle_width = 100
-var paddle_depth = 20
+var paddle_width = 70
+var paddle_depth = 10
 var paddle_speed = 10
 
-var ball_size = 20
+var ball_size = 16
 var ball_trajectory = randomDirection()
 var ball_speed = 2
 var ball_acceleration = 0.02
@@ -43,7 +35,8 @@ var ball_color = "#fff"
 var active_paddle     //PLAYER, LHS, TOP, RHS
 var score = [0,0,0,0] //PLAYER, LHS, TOP, RHS
 
-//var ai_gain = 2
+var ai_lag = 4
+var ai_count = 0
 
 var context
   , ball_x = game_size_x/2
@@ -95,8 +88,14 @@ shell.on("tick", function() {
   }
 
   updateBall()
-  updateComputerPaddles()
 
+  if(ai_count===ai_lag){
+    updateComputerPaddles()
+    ai_count=0
+  }
+  else{
+    ai_count+=1
+  }
 })
 
 //Render a frame
@@ -159,6 +158,9 @@ function updateBall() {
     else if (!insideRegion(ball_corners[i],game_bounds)){
       updateBallTrajectory("END")
       updateBallColor("END")   //UPDATE THE BALL COLOR TO FLASHING?
+      game_state = "END"
+      updateScore()
+      //document.write("score is: " + score)
     }
 
     else {  //no hit
@@ -233,7 +235,6 @@ function updateBallTrajectory(_event){
   else if(_event==="END") {
     ball_trajectory[0] = 0
     ball_trajectory[1] = 0
-    updateScore()
   }
 
 }
@@ -258,11 +259,16 @@ function updateScore(){
     score[3]++
   }
 
+  //alert("score is: " + score)
 }
 
 
 function calculateAIcomputerPaddles() {
   var directions = [0,0,0]
+
+  if (game_state == "END") {
+    return directions
+  }
 
   if(ball_y > computer_LHS_y){ //LHS Calculation
     directions[0]=1
@@ -345,11 +351,12 @@ function paddleBounds(paddle){
 function gameBounds(){
 
   var result =[]
+  var margin = 20
 
-  var corner_1 = [0,0]
-  var corner_2 = [0, game_size_y]
-  var corner_3 = [game_size_x, game_size_y]
-  var corner_4 = [game_size_x, 0]
+  var corner_1 = [-margin,-margin]
+  var corner_2 = [-margin, game_size_y+margin]
+  var corner_3 = [game_size_x+margin, game_size_y+margin]
+  var corner_4 = [game_size_x+margin, -margin]
 
   result = [corner_1, corner_2, corner_3, corner_4, corner_1]
 

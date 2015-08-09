@@ -28,7 +28,8 @@ var paddle_speed = 10
 
 var ball_size = 16
 var ball_trajectory = randomDirection()
-var ball_speed = 2
+var initial_ball_speed = 2
+var ball_speed = initial_ball_speed
 var ball_acceleration = 0.02
 var ball_color = "#fff"
 
@@ -89,13 +90,15 @@ shell.on("tick", function() {
 
   updateBall()
 
-  if(ai_count===ai_lag){
+  if(ai_count==ai_lag){
     updateComputerPaddles()
     ai_count=0
   }
   else{
     ai_count+=1
   }
+
+
 })
 
 //Render a frame
@@ -160,7 +163,11 @@ function updateBall() {
       updateBallColor("END")   //UPDATE THE BALL COLOR TO FLASHING?
       game_state = "END"
       updateScore()
+      startNewRound() 
       //document.write("score is: " + score)
+
+      //set a timer and start the next round after
+
     }
 
     else {  //no hit
@@ -170,6 +177,22 @@ function updateBall() {
 
   updateBallPosition()    //continue in same direction, only accelerate if made strike
   updateBallColor()
+}
+
+
+function startNewRound(){
+  game_state = "NEW ROUND"
+
+  player_x = game_size_x/2
+  computer_LHS_y = game_size_y/2
+  computer_TOP_x = game_size_x/2
+  computer_RHS_y = game_size_y/2 
+
+  ball_x = game_size_x/2
+  ball_y = game_size_y/2
+  updateBallColor(game_state)
+  ball_speed = initial_ball_speed
+  ball_trajectory = randomDirection()
 }
 
 
@@ -192,7 +215,9 @@ function updateBallColor(condition){
   if(condition === "END"){
     //ball_color = "#00f"  //change to color of winning player from round
   }
-
+  if(condition === "NEW ROUND"){
+    ball_color = "#fff"  
+  }
   if(condition === "PLAYER"){
     ball_color = player_color
   }
@@ -246,6 +271,9 @@ function activePaddle(player){
 
 
 function updateScore(){
+
+  game_state = "NEW ROUND"
+
   if(active_paddle==="PLAYER"){
     score[0]++
   }

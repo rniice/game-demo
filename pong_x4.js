@@ -20,8 +20,8 @@ var shell = require("../shell")()
 //ad a score tracker to the top.
 
 
-var game_size_x = 800
-var game_size_y = 800
+var game_size_x = 400
+var game_size_y = 400
 var game_bounds = gameBounds()
 
 var player_color = "#444"
@@ -41,7 +41,9 @@ var ball_acceleration = 0.02
 var ball_color = "#fff"
 
 var active_paddle     //PLAYER, LHS, TOP, RHS
-var score = []        //PLAYER, LHS, TOP, RHS
+var score = [0,0,0,0] //PLAYER, LHS, TOP, RHS
+
+//var ai_gain = 2
 
 var context
   , ball_x = game_size_x/2
@@ -176,9 +178,11 @@ function updateBallPosition(){
 
 
 function updateComputerPaddles(){
-  computer_LHS_y += 1 * paddle_speed
-  computer_TOP_x += 1 * paddle_speed
-  computer_RHS_y += 1 * paddle_speed
+  var paddle_direction = calculateAIcomputerPaddles()
+
+  computer_LHS_y += paddle_direction[0] * paddle_speed
+  computer_TOP_x += paddle_direction[1] * paddle_speed
+  computer_RHS_y += paddle_direction[2] * paddle_speed
 }
 
 
@@ -256,6 +260,33 @@ function updateScore(){
 
 }
 
+
+function calculateAIcomputerPaddles() {
+  var directions = [0,0,0]
+
+  if(ball_y > computer_LHS_y){ //LHS Calculation
+    directions[0]=1
+  }
+  else {
+    directions[0]=-1
+  }
+
+  if(ball_y > computer_RHS_y){     //LHS Calculation
+    directions[2]=1
+  }
+  else{
+    directions[2]=-1
+  }
+
+  if(ball_x > computer_TOP_x){    //TOP Calculation
+    directions[1]=1
+  }
+  else{
+    directions[1]=-1
+  }
+
+  return directions
+}
 
 function ballBounds(){
   var result =[]

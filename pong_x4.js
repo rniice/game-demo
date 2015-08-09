@@ -2,23 +2,46 @@
 var shell = require("../shell")()
 
 
-//add in point in poly to check if the feature bounds lie within another feature bounds.
-//alert(insideRegion([1,3],[[0,0],[0,2],[2,2],[2,0],[0,0]]))
+//acceleration of ball after strike:            implemented
+
+//spin of ball after strike (at strike_speed):  not implemented
+
+//function that varies the color of ball
+
+//change the ball to a circular shape and get bounds
+
+//when ball exits range toggle score event
+
+//paddle that strikes before a miss event gets a point
+
+//render the ball in multiple chunks for animated ball effect
+
+//add a timer tracker to the top.
+//ad a score tracker to the top.
+
 
 var game_size_x = 800
 var game_size_y = 800
+var game_bounds = gameBounds()
+
+var player_color = "#444"
+var lhs_color = "#a00"
+var top_color = "#0a0"
+var rhs_color = "#00a"
+
 
 var paddle_width = 100
 var paddle_depth = 20
-
 var paddle_speed = 10
 
 var ball_size = 20
 var ball_trajectory = randomDirection()
 var ball_speed = 2
 var ball_acceleration = 0.02
+var ball_color = "#fff"
 
-var score = 0
+var active_paddle     //PLAYER, LHS, TOP, RHS
+var score = []        //PLAYER, LHS, TOP, RHS
 
 var context
   , ball_x = game_size_x/2
@@ -38,6 +61,7 @@ shell.bind("move-right", "right", "D")
 shell.bind("move-up", "up", "W")
 shell.bind("move-down", "down", "S")
 shell.bind("pause", "spacebar")
+shell.bind("resume", "R")
 
 //Fired when document is loaded
 shell.on("init", function() {
@@ -57,19 +81,18 @@ shell.on("tick", function() {
   if(shell.down("move-right")) {
     player_x += paddle_speed
   }
-  /*if(shell.down("move-up")) {
-    player_y -= 1
-  }
-  if(shell.down("move-down")) {
-    player_y += 1
-  }*/
   if(shell.down("pause")){
     //suspend movement//alert
     //alert('paused!')
+    //GameShell.pause(false)
+  }
+  if(shell.down("resume")){
+    //suspend movement//alert
+    //alert('paused!')
+    //GameShell.pause(false)
   }
 
   updateBall()
-
   updateComputerPaddles()
 
 })
@@ -79,19 +102,19 @@ shell.on("render", function(frame_time) {
   context.fillStyle = "#000"
   context.fillRect(0, 0, game_size_x, game_size_y)
   
-  context.fillStyle = "#fff"
+  context.fillStyle = ball_color
   context.fillRect(ball_x-ball_size/2, ball_y-ball_size/2, ball_size, ball_size)
 
-  context.fillStyle = "#ccc"
+  context.fillStyle = player_color
   context.fillRect(player_x-paddle_width/2, player_y-paddle_depth, paddle_width, paddle_depth)
 
-  context.fillStyle = "#a00"
+  context.fillStyle = lhs_color
   context.fillRect(computer_LHS_x, computer_LHS_y-paddle_width/2, paddle_depth, paddle_width)
 
-  context.fillStyle = "#0a0"
+  context.fillStyle = top_color
   context.fillRect(computer_TOP_x-paddle_width/2, computer_TOP_y, paddle_width, paddle_depth)
 
-  context.fillStyle = "#00a"
+  context.fillStyle = rhs_color
   context.fillRect(computer_RHS_x-paddle_depth, computer_RHS_y-paddle_width/2, paddle_depth, paddle_width)
 
 })
@@ -109,27 +132,40 @@ function updateBall() {
   for (var i = 0; i < ball_corners.length; i++){
     if(insideRegion(ball_corners[i],player_paddle_bounds)){
       updateBallTrajectory("PLAYER")
+      activePaddle("PLAYER")
       updateBallSpeed()
+      updateBallColor("PLAYER")
     }
     else if (insideRegion(ball_corners[i],lhs_paddle_bounds)){
       updateBallTrajectory("LHS")
+      activePaddle("LHS")
       updateBallSpeed()
+      updateBallColor("LHS")
     }
     else if (insideRegion(ball_corners[i],top_paddle_bounds)){
       updateBallTrajectory("TOP")
+      activePaddle("TOP")
       updateBallSpeed()
+      updateBallColor("TOP")
     }    
     else if (insideRegion(ball_corners[i],rhs_paddle_bounds)){
       updateBallTrajectory("RHS")
+      activePaddle("RHS")
       updateBallSpeed()
+      updateBallColor("RHS")
     }
+    else if (!insideRegion(ball_corners[i],game_bounds)){
+      updateBallTrajectory("END")
+      updateBallColor("END")   //UPDATE THE BALL COLOR TO FLASHING?
+    }
+
     else {  //no hit
 
     }
   }
 
   updateBallPosition()    //continue in same direction, only accelerate if made strike
-
+  updateBallColor()
 }
 
 
@@ -138,32 +174,75 @@ function updateBallPosition(){
   ball_y += ball_trajectory[1] * ball_speed
 }
 
-function updateBallSpeed(){
-  ball_speed *= (1+ball_acceleration)
-}
-
-function updateBallTrajectory(paddle){
-
-  if(paddle==="PLAYER"){
-    ball_trajectory[1] *= -1
-  }
-  else if(paddle==="LHS"){
-    ball_trajectory[0] *= -1
-  }
-  else if(paddle==="TOP"){
-    ball_trajectory[1] *= -1
-  }
-  else if(paddle==="RHS"){
-    ball_trajectory[0] *=-1
-  }
-
-}
-
 
 function updateComputerPaddles(){
   computer_LHS_y += 1 * paddle_speed
   computer_TOP_x += 1 * paddle_speed
   computer_RHS_y += 1 * paddle_speed
+}
+
+
+function updateBallColor(condition){
+  if(condition === "END"){
+    ball_color = "#00f"  //change to color of winning player from round
+  }
+
+  if(condition === "PLAYER"){
+    ball_color = player_color
+  }
+  if(condition === "LHS"){
+    ball_color = lhs_color
+  }
+  if(condition === "TOP"){
+    ball_color = top_color
+  }
+  if(condition === "RHS"){
+    ball_color = rhs_color
+  }
+
+
+  else{                         //make the ball flash
+    //ball_color = "#0c0"
+  }
+}
+
+
+function updateBallSpeed(){
+  ball_speed *= (1+ball_acceleration)
+}
+
+
+function updateBallTrajectory(_event){
+
+  if(_event==="PLAYER"){
+    ball_trajectory[1] *= -1
+  }
+  else if(_event==="LHS"){
+    ball_trajectory[0] *= -1
+  }
+  else if(_event==="TOP"){
+    ball_trajectory[1] *= -1
+  }
+  else if(_event==="RHS"){
+    ball_trajectory[0] *=-1
+  }
+  else if(_event==="END") {
+    ball_trajectory[0] = 0
+    ball_trajectory[1] = 0
+  }
+
+}
+
+
+function activePaddle(player){
+  active_paddle = player
+}
+
+
+function updateScore(){
+
+
+
 }
 
 
@@ -214,6 +293,21 @@ function paddleBounds(paddle){
 
   }
 
+
+  result = [corner_1, corner_2, corner_3, corner_4, corner_1]
+
+  return result
+}
+
+
+function gameBounds(){
+
+  var result =[]
+
+  var corner_1 = [0,0]
+  var corner_2 = [0, game_size_y]
+  var corner_3 = [game_size_x, game_size_y]
+  var corner_4 = [game_size_x, 0]
 
   result = [corner_1, corner_2, corner_3, corner_4, corner_1]
 

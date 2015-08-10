@@ -1,14 +1,12 @@
 ;(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 var shell = require("../shell")()
 
+//var Elapsed = require('./elapsed.js')
 
-//acceleration of ball after strike:            implemented
 //spin of ball after strike (at strike_speed):  not implemented
-//change the ball to a circular shape and get bounds:  not implemented
-//display score in html using jqery:  not implemented
-//render the ball in multiple chunks for animated ball effect:  not implemented
 //add a timer tracker to the top.:  not implemented
-//ad a score tracker to the top.:  not implemented
+
+//var start = new Date(milliseconds)
 
 
 var game_size_x = 300
@@ -164,10 +162,6 @@ function updateBall() {
       game_state = "END"
       updateScore()
       startNewRound() 
-      //document.write("score is: " + score)
-
-      //set a timer and start the next round after
-
     }
 
     else {  //no hit
@@ -272,8 +266,6 @@ function activePaddle(player){
 
 function updateScore(){
 
-  game_state = "NEW ROUND"
-
   if(active_paddle==="PLAYER"){
     score[0]++
   }
@@ -287,7 +279,17 @@ function updateScore(){
     score[3]++
   }
 
-  //alert("score is: " + score)
+  if(game_state === "END"){
+    $( "p" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);
+    game_state = "NEW ROUND"
+  }
+
+
+ //var elem = document.getElementById("scores");
+  //console.log(elem);
+ //alert("score is: " + elem)
+ // document.body.innerHTML = document.body.innerHTML.replace("/score/g, 'hi');
+
 }
 
 

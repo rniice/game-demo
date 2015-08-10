@@ -1,18 +1,16 @@
 ;(function(e,t,n,r){function i(r){if(!n[r]){if(!t[r]){if(e)return e(r);throw new Error("Cannot find module '"+r+"'")}var s=n[r]={exports:{}};t[r][0](function(e){var n=t[r][1][e];return i(n?n:e)},s,s.exports)}return n[r].exports}for(var s=0;s<r.length;s++)i(r[s]);return i})(typeof require!=="undefined"&&require,{1:[function(require,module,exports){
 var shell = require("../shell")()
 
-//var Elapsed = require('./elapsed.js')
 
 //spin of ball after strike (at strike_speed):  not implemented
 //add a timer tracker to the top.:  not implemented
-
-//var start = new Date(milliseconds)
-
+var start_time = 0
+var elapsed_time = 0
 
 var game_size_x = 300
 var game_size_y = 300
 var game_bounds = gameBounds()
-var game_state = "RUNNING"
+var game_state = "NEW ROUND"
 
 var player_color = "#444"
 var lhs_color = "#a00"
@@ -50,12 +48,13 @@ var context
   , computer_RHS_y = game_size_y/2  
 
 //Bind keyboard commands
-shell.bind("move-left", "left", "A")
-shell.bind("move-right", "right", "D")
+shell.bind("move-left", "left", "A", "volume-down")
+shell.bind("move-right", "right", "D", "volume-up")
 shell.bind("move-up", "up", "W")
 shell.bind("move-down", "down", "S")
 shell.bind("pause", "spacebar")
 shell.bind("resume", "R")
+
 
 //Fired when document is loaded
 shell.on("init", function() {
@@ -64,6 +63,8 @@ shell.on("init", function() {
   canvas.height = game_size_y
   document.body.appendChild(canvas)
   context = canvas.getContext("2d")
+
+  start_time = shell.startTime
 
 })
 
@@ -76,14 +77,12 @@ shell.on("tick", function() {
     player_x += paddle_speed
   }
   if(shell.down("pause")){
-    //suspend movement//alert
-    //alert('paused!')
-    //GameShell.pause(false)
+    game_state = "PAUSED"
+    shell.paused = true
   }
   if(shell.down("resume")){
-    //suspend movement//alert
-    //alert('paused!')
-    //GameShell.pause(false)
+    game_state = "RESUMED"
+    shell.paused = false
   }
 
   updateBall()
@@ -96,7 +95,7 @@ shell.on("tick", function() {
     ai_count+=1
   }
 
-
+  updateElapsedTime()
 })
 
 //Render a frame
@@ -171,6 +170,16 @@ function updateBall() {
 
   updateBallPosition()    //continue in same direction, only accelerate if made strike
   updateBallColor()
+}
+
+
+function updateElapsedTime(){
+  //elapsed_time += shell.tickTime * shell.tickCount
+
+  //current_time = shell.frameTime * shell.tickTime
+  //elapsed_time = shell.frameCount * shell.frameTime
+  
+  $( ".time" ).html("Elapsed Time: " + Math.round(elapsed_time))  //updated DOM
 }
 
 
@@ -280,7 +289,7 @@ function updateScore(){
   }
 
   if(game_state === "END"){
-    $( "p" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);
+    $( "p" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);     //update DOM
     game_state = "NEW ROUND"
   }
 

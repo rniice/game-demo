@@ -4,7 +4,9 @@ var shell = require("../shell")()
 
 //spin of ball after strike (at strike_speed):  not implemented
 //add a timer tracker to the top.:  not implemented
-var start_time = 0
+var date = new Date()
+var start_time = date.getTime()
+var current_time = start_time
 var elapsed_time = 0
 
 var game_size_x = 300
@@ -174,12 +176,11 @@ function updateBall() {
 
 
 function updateElapsedTime(){
-  //elapsed_time += shell.tickTime * shell.tickCount
+  var date_current = new Date()
+  current_time = date_current.getTime()
+  elapsed_time = (current_time - start_time)/1000
 
-  //current_time = shell.frameTime * shell.tickTime
-  //elapsed_time = shell.frameCount * shell.frameTime
-  
-  $( ".time" ).html("Elapsed Time: " + Math.round(elapsed_time))  //updated DOM
+  $( ".time" ).html("Elapsed Time: " + Math.round(elapsed_time) + " seconds")  //updated DOM
 }
 
 

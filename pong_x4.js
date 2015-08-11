@@ -133,25 +133,25 @@ function updateBall() {
   var rhs_paddle_bounds = paddleBounds("RHS")
 
   for (var i = 0; i < ball_corners.length; i++){
-    if(insideRegion(ball_corners[i],player_paddle_bounds)){
+    if(insideRegion(ball_corners[i],player_paddle_bounds)&&(active_paddle!=="PLAYER")){
       updateBallTrajectory("PLAYER")
       activePaddle("PLAYER")
       updateBallSpeed()
       updateBallColor("PLAYER")
     }
-    else if (insideRegion(ball_corners[i],lhs_paddle_bounds)){
+    else if (insideRegion(ball_corners[i],lhs_paddle_bounds)&&(active_paddle!=="LHS")){
       updateBallTrajectory("LHS")
       activePaddle("LHS")
       updateBallSpeed()
       updateBallColor("LHS")
     }
-    else if (insideRegion(ball_corners[i],top_paddle_bounds)){
+    else if (insideRegion(ball_corners[i],top_paddle_bounds)&&(active_paddle!=="TOP")){
       updateBallTrajectory("TOP")
       activePaddle("TOP")
       updateBallSpeed()
       updateBallColor("TOP")
     }    
-    else if (insideRegion(ball_corners[i],rhs_paddle_bounds)){
+    else if (insideRegion(ball_corners[i],rhs_paddle_bounds)&&(active_paddle!=="RHS")){
       updateBallTrajectory("RHS")
       activePaddle("RHS")
       updateBallSpeed()

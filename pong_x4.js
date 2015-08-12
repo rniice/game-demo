@@ -291,7 +291,7 @@ function updateScore(){
   }
 
   if(game_state === "END"){
-    $( "p" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);     //update DOM
+    $( ".score" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);     //update DOM
     game_state = "NEW ROUND"
   }
 

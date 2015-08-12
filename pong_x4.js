@@ -162,6 +162,7 @@ function updateBall() {
       updateBallColor("END")   //UPDATE THE BALL COLOR TO FLASHING?
       game_state = "END"
       updateScore()
+      active_paddle = "NONE"
       startNewRound() 
     }
 

@@ -42,6 +42,8 @@ var context
   , ball_y = game_size_y/2
   , player_x = game_size_x/2
   , player_y = game_size_y
+  , slider_value = 50               //initialize slider value at middle
+  , slider_enabled = true
   , computer_LHS_x = 0
   , computer_LHS_y = game_size_y/2
   , computer_TOP_x = game_size_x/2
@@ -75,15 +77,15 @@ shell.on("init", function() {
 //Fired once per game tick
 shell.on("tick", function() {
 
-  var slider_value = 50;      //initialize slider value at middle
-
   if(shell.down("move-left")) {
     player_x -= paddle_speed
-    //slider_value = 50;   //override slider value to zero
+    slider_enabled = false;   //override slider value to zero
+    document.getElementById("dir_player").value = 50;
   }
   if(shell.down("move-right")) {
     player_x += paddle_speed
-    //slider_value = 50;   //override slider value to zero
+    slider_enabled = false;   //override slider value to zero
+    document.getElementById("dir_player").value = 50;
   }
   if(shell.down("pause")){
     game_state = "PAUSED"
@@ -94,10 +96,22 @@ shell.on("tick", function() {
     shell.paused = false
   }
 
-  if(slider_value !=50){ //if slider value is something other than zero, take the input
-    slider_value = document.getElementById("dir_player").value;
+  slider_value = document.getElementById("dir_player").value;
+  if(slider_value != 50) {
+    slider_enabled = true
+  }
+
+  if(slider_enabled){ //if slider value is something other than zero, take the input
     player_x = slider_value/100 * game_size_x
   }
+
+  if (player_x < 0) {
+    player_x = 0
+  }
+  if (player_x > game_size_x){
+    player_x = game_size_x
+  }
+
 
   updateBall()
 

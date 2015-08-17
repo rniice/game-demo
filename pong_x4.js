@@ -63,7 +63,9 @@ shell.on("init", function() {
   var canvas = document.createElement("canvas")
   canvas.width = game_size_x
   canvas.height = game_size_y
-  document.body.appendChild(canvas)
+  //document.body.appendChild(canvas)
+  document.getElementById("canvas").appendChild(canvas)
+
   context = canvas.getContext("2d")
 
   start_time = shell.startTime
@@ -72,11 +74,16 @@ shell.on("init", function() {
 
 //Fired once per game tick
 shell.on("tick", function() {
+
+  var slider_value = 50;      //initialize slider value at middle
+
   if(shell.down("move-left")) {
     player_x -= paddle_speed
+    //slider_value = 50;   //override slider value to zero
   }
   if(shell.down("move-right")) {
     player_x += paddle_speed
+    //slider_value = 50;   //override slider value to zero
   }
   if(shell.down("pause")){
     game_state = "PAUSED"
@@ -87,14 +94,9 @@ shell.on("tick", function() {
     shell.paused = false
   }
 
-  var slider_value = document.getElementById("dir_player").value;
-
-  if(slider_value < -30){
-    player_x -= paddle_speed * Math.abs(slider_value)/50
-  }
-
-  if(slider_value > 30) {
-    player_x += paddle_speed * slider_value/50
+  if(slider_value !=50){ //if slider value is something other than zero, take the input
+    slider_value = document.getElementById("dir_player").value;
+    player_x = slider_value/100 * game_size_x
   }
 
   updateBall()
@@ -304,12 +306,6 @@ function updateScore(){
     $( ".score" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);     //update DOM
     game_state = "NEW ROUND"
   }
-
-
- //var elem = document.getElementById("scores");
-  //console.log(elem);
- //alert("score is: " + elem)
- // document.body.innerHTML = document.body.innerHTML.replace("/score/g, 'hi');
 
 }
 

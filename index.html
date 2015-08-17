@@ -10,6 +10,7 @@
 		<meta property="og:title" content="">
 
 		<script src="jquery-1.11.3.min.js"></script>
+		<script src="./pong_x4.js"></script>
 
 		<!--<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	    <link rel="stylesheet" href="css/font-awesome.min.css" rel="stylesheet">
@@ -23,19 +24,19 @@
 	<body>
 		<h1>Pong x4</h1>
 
-		<div class = "game console">
-			<script src="./pong_x4.js"></script>
-		</div>
-
 		<p class = "score">PLAYER: 0 &nbsp LHS: 0 &nbsp TOP: 0 &nbsp RHS: 0</p>
 		<p class = "time">Elapsed Time: 0 seconds</p>
-		<p class = "controls web">left: "left-arrow" &nbsp right: "right-arrow" &nbsp pause/resume: "spacebar"</p>
-		<!--<p class = "controls mobile">left: "left-arrow" &nbsp right: "right-arrow" &nbsp pause/resume: "spacebar""</p> -->
 
-		
-		<div class = "slider_paddle"
-			<label for="dir_player">Left/Right:</label>
-			<input type="range" name="dir_player" id="dir_player" value="0" min="-50" max="50">
+		<div id = "canvas">
+
+		</div>
+		<br>
+
+		<p class = "controls web">Desktop Control: Arrow Keys</p>
+
+		<div id = "slider_paddle">
+			<label for="dir_player">Mobile Control: </label>
+			<input type="range" name="dir_player" id="dir_player" value="50" min="0" max="100">
 		</div>
 		
 	</body>

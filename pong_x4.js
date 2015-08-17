@@ -14,7 +14,7 @@ var game_size_y = 300
 var game_bounds = gameBounds()
 var game_state = "NEW ROUND"
 
-var player_color = "#444"
+var player_color = "#FF0"
 var lhs_color = "#a00"
 var top_color = "#0a0"
 var rhs_color = "#00a"
@@ -85,6 +85,16 @@ shell.on("tick", function() {
   if(shell.down("resume")){
     game_state = "RESUMED"
     shell.paused = false
+  }
+
+  var slider_value = document.getElementById("dir_player").value;
+
+  if(slider_value < -10){
+    player_x -= paddle_speed * Math.abs(slider_value)/50
+  }
+
+  if(slider_value > 10) {
+    player_x += paddle_speed * slider_value/50
   }
 
   updateBall()

@@ -89,11 +89,11 @@ shell.on("tick", function() {
 
   var slider_value = document.getElementById("dir_player").value;
 
-  if(slider_value < -10){
+  if(slider_value < -30){
     player_x -= paddle_speed * Math.abs(slider_value)/50
   }
 
-  if(slider_value > 10) {
+  if(slider_value > 30) {
     player_x += paddle_speed * slider_value/50
   }
 

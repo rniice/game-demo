@@ -316,8 +316,10 @@ function updateScore(){
     score[3]++
   }
 
-  if(game_state === "END"){
-    $( ".score" ).html("PLAYER: " + score[0] + " &nbsp LHS: " + score[1] + " &nbsp TOP: "+ score[2] + " &nbsp RHS: "+ score[3]);     //update DOM
+  if(game_state === "END" || game_state === "NEW ROUND"){
+    $( ".score" ).html("<table><tr><th>Yellow</th><th>Red</th><th>Green</th><th>Blue</th></tr><tr><td>" + score[0] + 
+      "</td><td>" + score[1] + "</td><td>" + score[2] + "</td><td>" + score[3] + "</td></tr></table>");
+    
     game_state = "NEW ROUND"
   }
 

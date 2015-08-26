@@ -14,9 +14,9 @@
 
 		<!--<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	    <link rel="stylesheet" href="css/font-awesome.min.css" rel="stylesheet">
-		
-		<link rel="stylesheet" type="text/css" href="css/style.css">	
-		<-->
+		-->
+
+		<link rel="stylesheet" type="text/css" href="css/main.css">	
 		
 		<script>
 			(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -27,23 +27,38 @@
 			ga('create', 'UA-23563593-4', 'auto');
 			ga('send', 'pageview');
 		</script>
-		
+
 	</head>
 
 
 	<body>
 		<h1>Pong x4</h1>
 
-		<p class = "score">PLAYER: 0 &nbsp LHS: 0 &nbsp TOP: 0 &nbsp RHS: 0</p>
 		<p class = "time">Elapsed Time: 0 seconds</p>
 
-		<div id = "canvas">
+		<table class = "score">
+		  <tr>
+		    <th>Yellow</th>
+		    <th>Red</th>
+		    <th>Green</th>
+		    <th>Blue</th>
+		  </tr>
+		  <tr>
+		    <td>0</td>
+		    <td>0</td>
+		    <td>0</td>
+		    <td>0</td>
+		  </tr>
+  		</table>
 
-		</div>
-		<br>
+  		<br>
+  		
+		<div id = "canvas"></div>
+
+		<p class = "controls_web">Control: Left, Right, or Slider </p>
 
 		<div id = "slider_paddle">
-			<label for="dir_player">Mobile Control: </label>
+			<label for="dir_player"></label>
 			<input type="range" name="dir_player" id="dir_player" value="50" min="0" max="100">
 		</div>
 		

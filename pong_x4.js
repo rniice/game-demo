@@ -26,6 +26,8 @@ var paddle_speed = 10
 
 var ball_size = 16
 var ball_trajectory = randomDirection()
+var ball_target = []           //x y value for where ball will hit bounds
+    updateBallTarget()
 var initial_ball_speed = 2
 var ball_speed = initial_ball_speed
 var ball_acceleration = 0.02
@@ -163,24 +165,28 @@ function updateBall() {
       updateBallTrajectory("PLAYER")
       activePaddle("PLAYER")
       updateBallSpeed()
+      updateBallTarget()
       updateBallColor("PLAYER")
     }
     else if (insideRegion(ball_corners[i],lhs_paddle_bounds)&&(active_paddle!=="LHS")){
       updateBallTrajectory("LHS")
       activePaddle("LHS")
       updateBallSpeed()
+      updateBallTarget()
       updateBallColor("LHS")
     }
     else if (insideRegion(ball_corners[i],top_paddle_bounds)&&(active_paddle!=="TOP")){
       updateBallTrajectory("TOP")
       activePaddle("TOP")
       updateBallSpeed()
+      updateBallTarget()
       updateBallColor("TOP")
     }    
     else if (insideRegion(ball_corners[i],rhs_paddle_bounds)&&(active_paddle!=="RHS")){
       updateBallTrajectory("RHS")
       activePaddle("RHS")
       updateBallSpeed()
+      updateBallTarget()
       updateBallColor("RHS")
     }
     else if (!insideRegion(ball_corners[i],game_bounds)){
@@ -189,6 +195,7 @@ function updateBall() {
       game_state = "END"
       updateScore()
       active_paddle = "NONE"
+      ball_target = [[0,0],[0,0],[0,0],[0,0]]
       startNewRound() 
     }
 
@@ -224,12 +231,63 @@ function startNewRound(){
   updateBallColor(game_state)
   ball_speed = initial_ball_speed
   ball_trajectory = randomDirection()
+  updateBallTarget()
 }
 
 
 function updateBallPosition(){
   ball_x += ball_trajectory[0] * ball_speed
   ball_y += ball_trajectory[1] * ball_speed
+}
+
+
+function updateBallTarget() {     //after a paddle strike update target position
+  var m = ball_trajectory[1]/ball_trajectory[0]
+  var x = ball_x 
+  var y = ball_y
+
+  var b = y - m * x     //intersection point in y
+
+  var intersection_pts = [] //places where trajector hits game bounds
+
+  var ball_player_x_first = (game_size_y - b)/m
+  var ball_top_x_first = (game_size_y - b)/m
+
+  var ball_lhs_y_first = m * x + b
+  var ball_rhs_y_first = m * game_size_x + b
+
+  if(ball_player_x_first < 0) {
+    ball_player_x_first = 0
+  }
+  if(ball_player_x_first > game_size_x) {
+    ball_player_x_first = game_size_x
+  }
+  if(ball_top_x_first < 0) {
+    ball_top_x_first = 0
+  }
+  if(ball_top_x_first > game_size_x) {
+    ball_top_x_first = game_size_x
+  }
+  if(ball_lhs_y_first < 0) {
+    ball_lhs_y_first = 0
+  }
+  if(ball_lhs_y_first > game_size_y) {
+    ball_lhs_y_first = game_size_y
+  }
+  if(ball_rhs_y_first < 0) {
+    ball_rhs_y_first = 0
+  }
+  if(ball_rhs_y_first > game_size_y) {
+    ball_rhs_y_first = game_size_y
+  }
+  
+  var ball_player = [ball_player_x_first, game_size_y]
+  var ball_top = [ball_top_x_first, 0]
+  var ball_lhs = [0, ball_lhs_y_first]
+  var ball_rhs = [game_size_x, ball_rhs_y_first]
+
+
+  ball_target = [ball_player,ball_lhs,ball_top,ball_rhs]   //update ball_target
 }
 
 
@@ -333,25 +391,25 @@ function calculateAIcomputerPaddles() {
     return directions
   }
 
-  if(ball_y > computer_LHS_y){ //LHS Calculation
+  if(ball_target[1][1] > computer_LHS_y){ //LHS Calculation
     directions[0]=1
   }
   else {
     directions[0]=-1
   }
 
-  if(ball_y > computer_RHS_y){     //LHS Calculation
-    directions[2]=1
-  }
-  else{
-    directions[2]=-1
-  }
-
-  if(ball_x > computer_TOP_x){    //TOP Calculation
+  if(ball_target[2][0] > computer_TOP_x){    //TOP Calculation
     directions[1]=1
   }
   else{
     directions[1]=-1
+  }
+
+  if(ball_target[3][1] > computer_RHS_y){     //LHS Calculation
+    directions[2]=1
+  }
+  else{
+    directions[2]=-1
   }
 
   return directions

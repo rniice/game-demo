@@ -21,7 +21,7 @@ var rhs_color = "#00a"
 
 
 var paddle_width = 70
-var paddle_depth = 10
+var paddle_depth = 5
 var paddle_speed = 8
 
 var difficulty_percent = 0.40

@@ -27,7 +27,6 @@ var paddle_speed = 10
 var ball_size = 16
 var ball_trajectory = randomDirection()
 var ball_target = []           //x y value for where ball will hit bounds
-    updateBallTarget()
 var initial_ball_speed = 2
 var ball_speed = initial_ball_speed
 var ball_acceleration = 0.02
@@ -52,6 +51,8 @@ var context
   , computer_TOP_y = 0
   , computer_RHS_x = game_size_x
   , computer_RHS_y = game_size_y/2  
+
+updateBallTarget()
 
 //Bind keyboard commands
 shell.bind("move-left", "left", "A", "volume-down")
@@ -115,7 +116,7 @@ shell.on("tick", function() {
   }
 
 
-  updateBall()
+  updateBall();
 
   if(ai_count==ai_lag){
     updateComputerPaddles()
@@ -241,6 +242,13 @@ function updateBallPosition(){
 }
 
 
+function calculateTargetPlayer() {      //not implemented yet, returns which player the ball will strike next
+  var target_player;                    //the player the ball will hit first
+
+
+}
+
+
 function updateBallTarget() {     //after a paddle strike update target position
   var m = ball_trajectory[1]/ball_trajectory[0]
   var x = ball_x 
@@ -250,44 +258,50 @@ function updateBallTarget() {     //after a paddle strike update target position
 
   var intersection_pts = [] //places where trajector hits game bounds
 
-  var ball_player_x_first = (game_size_y - b)/m
-  var ball_top_x_first = (game_size_y - b)/m
+  var ball_player_x_first = (game_size_y - b)/m               //solve PLAYER predicted ball strike location
+  var ball_top_x_first = (0 - b)/m                            //solve TOP predicted ball strike location
+  var ball_lhs_y_first = b                                    //solve LHS predicted ball strike location
+  var ball_rhs_y_first = m * game_size_x + b                  //solve RHS predicted ball strike location
 
-  var ball_lhs_y_first = m * x + b
-  var ball_rhs_y_first = m * game_size_x + b
 
   if(ball_player_x_first < 0) {
     ball_player_x_first = 0
   }
-  if(ball_player_x_first > game_size_x) {
+  else if(ball_player_x_first > game_size_x) {
     ball_player_x_first = game_size_x
   }
+
   if(ball_top_x_first < 0) {
     ball_top_x_first = 0
   }
-  if(ball_top_x_first > game_size_x) {
+  else if(ball_top_x_first > game_size_x) {
     ball_top_x_first = game_size_x
   }
   if(ball_lhs_y_first < 0) {
     ball_lhs_y_first = 0
   }
-  if(ball_lhs_y_first > game_size_y) {
+  else if(ball_lhs_y_first > game_size_y) {
     ball_lhs_y_first = game_size_y
   }
   if(ball_rhs_y_first < 0) {
     ball_rhs_y_first = 0
   }
-  if(ball_rhs_y_first > game_size_y) {
+  else if(ball_rhs_y_first > game_size_y) {
     ball_rhs_y_first = game_size_y
   }
-  
-  var ball_player = [ball_player_x_first, game_size_y]
-  var ball_top = [ball_top_x_first, 0]
-  var ball_lhs = [0, ball_lhs_y_first]
-  var ball_rhs = [game_size_x, ball_rhs_y_first]
+
+
+  var ball_player = [Math.round(ball_player_x_first), game_size_y]
+  var ball_top = [Math.round(ball_top_x_first), 0]
+  var ball_lhs = [0, Math.round(ball_lhs_y_first)]
+  var ball_rhs = [game_size_x, Math.round(ball_rhs_y_first)]
 
 
   ball_target = [ball_player,ball_lhs,ball_top,ball_rhs]   //update ball_target
+  /* used for debugging purposes
+  $( ".ball_target" ).html("<table><tr><th>Yellow</th><th>Red</th><th>Green</th><th>Blue</th></tr><tr><td>" + ball_target[0][0] + 
+      "</td><td>" + ball_target[1][1] + "</td><td>" + ball_target[2][0] + "</td><td>" + ball_target[3][1] + "</td></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td></tr></table>");
+  */
 }
 
 

@@ -35,7 +35,7 @@ var ball_color = "#fff"
 var active_paddle     //PLAYER, LHS, TOP, RHS
 var score = [0,0,0,0] //PLAYER, LHS, TOP, RHS
 
-var ai_lag = 4
+//var ai_lag = 4
 var ai_count = 0
 
 var context
@@ -117,7 +117,9 @@ shell.on("tick", function() {
 
 
   updateBall();
+  updateComputerPaddles()
 
+  /*
   if(ai_count==ai_lag){
     updateComputerPaddles()
     ai_count=0
@@ -125,6 +127,7 @@ shell.on("tick", function() {
   else{
     ai_count+=1
   }
+  */
 
   updateElapsedTime()
 })
@@ -400,30 +403,64 @@ function updateScore(){
 
 function calculateAIcomputerPaddles() {
   var directions = [0,0,0]
+  var tolerance = 10
 
   if (game_state == "END") {
     return directions
   }
 
-  if(ball_target[1][1] > computer_LHS_y){ //LHS Calculation
-    directions[0]=1
+  var lhs_difference = computer_LHS_y - ball_target[1][1]
+  var top_difference = computer_TOP_x - ball_target[2][0]
+  var rhs_difference = computer_RHS_y - ball_target[3][1]
+
+  if (lhs_difference < 0) { //LHS Calculation
+    if(Math.abs(lhs_difference)<tolerance){
+      directions[0]=Math.abs(lhs_difference/tolerance)
+    }
+    else{
+      directions[0]=1
+    }
   }
-  else {
-    directions[0]=-1
+  else if (lhs_difference > 0){
+    if(Math.abs(lhs_difference)<tolerance){
+      directions[0]=-Math.abs(lhs_difference/tolerance)
+    }
+    else{
+      directions[0]=-1
+    }
+  }
+  if (top_difference < 0) { //TOP Calculation
+    if(Math.abs(top_difference)<tolerance){
+      directions[1]=Math.abs(top_difference/tolerance)
+    }
+    else{
+      directions[1]=1
+    }
+  }
+  else if (top_difference > 0){
+    if(Math.abs(top_difference)<tolerance){
+      directions[1]=-Math.abs(top_difference/tolerance)
+    }
+    else{
+      directions[1]=-1
+    }
   }
 
-  if(ball_target[2][0] > computer_TOP_x){    //TOP Calculation
-    directions[1]=1
+  if (rhs_difference < 0) { //RHS Calculation
+    if(Math.abs(rhs_difference)<tolerance){
+      directions[2]=Math.abs(rhs_difference/tolerance)
+    }
+    else{
+      directions[2]=1
+    }
   }
-  else{
-    directions[1]=-1
-  }
-
-  if(ball_target[3][1] > computer_RHS_y){     //LHS Calculation
-    directions[2]=1
-  }
-  else{
-    directions[2]=-1
+  else if (rhs_difference > 0){
+    if(Math.abs(rhs_difference)<tolerance){
+      directions[2]=-Math.abs(rhs_difference/tolerance)
+    }
+    else{
+      directions[2]=-1
+    }
   }
 
   return directions

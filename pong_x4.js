@@ -354,17 +354,24 @@ function updateBallSpeed(){
 
 function updateBallTrajectory(_event){
 
+  var random_adjust = 0.2 * (Math.random()*2 - 1)  //random value between -1 and 1 scaled by multiplier
+
   if(_event==="PLAYER"){
-    ball_trajectory[1] *= -1
+    ball_trajectory[0] *= 1 + random_adjust
+    ball_trajectory[1] *= -1 + random_adjust
   }
   else if(_event==="LHS"){
-    ball_trajectory[0] *= -1
+    ball_trajectory[0] *= -1 + random_adjust
+    ball_trajectory[1] *= 1 + random_adjust
   }
   else if(_event==="TOP"){
-    ball_trajectory[1] *= -1
+    ball_trajectory[0] *= 1 + random_adjust
+    ball_trajectory[1] *= -1 + random_adjust
   }
   else if(_event==="RHS"){
-    ball_trajectory[0] *=-1
+    ball_trajectory[0] *=-1 + random_adjust
+    ball_trajectory[1] *= 1 + random_adjust
+
   }
   else if(_event==="END") {
     ball_trajectory[0] = 0

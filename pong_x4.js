@@ -24,13 +24,13 @@ var paddle_width = 70
 var paddle_depth = 10
 var paddle_speed = 8
 
-var difficulty_percent = 0.50
+var difficulty_percent = 0.40
 var ai_paddle_speed = paddle_speed * difficulty_percent
 
 var ball_size = 16
 var ball_trajectory = randomDirection()
 var ball_target = []           //x y value for where ball will hit bounds
-var initial_ball_speed = 3.5
+var initial_ball_speed = 4
 var ball_speed = initial_ball_speed
 var ball_acceleration = 0.02
 var ball_color = "#fff"
@@ -271,7 +271,7 @@ function updateBallTarget() {     //after a paddle strike update target position
 
 
   if(ball_player_x_first < 0) {
-    ball_player_x_first = 0
+    ball_player_x_first = 0                                   
   }
   else if(ball_player_x_first > game_size_x) {
     ball_player_x_first = game_size_x
@@ -407,6 +407,7 @@ function updateScore(){
 function calculateAIcomputerPaddles() {
   var directions = [0,0,0]
   var tolerance = 10
+  var tolerance_resolved = tolerance + paddle_width/2
 
   if (game_state == "END") {
     return directions
@@ -417,7 +418,7 @@ function calculateAIcomputerPaddles() {
   var rhs_difference = computer_RHS_y - ball_target[3][1]
 
   if (lhs_difference < 0) { //LHS Calculation
-    if(Math.abs(lhs_difference)<tolerance){
+    if(Math.abs(lhs_difference)<tolerance_resolved){
       directions[0]=Math.abs(lhs_difference/tolerance)
     }
     else{
@@ -425,7 +426,7 @@ function calculateAIcomputerPaddles() {
     }
   }
   else if (lhs_difference > 0){
-    if(Math.abs(lhs_difference)<tolerance){
+    if(Math.abs(lhs_difference)<tolerance_resolved){
       directions[0]=-Math.abs(lhs_difference/tolerance)
     }
     else{
@@ -433,7 +434,7 @@ function calculateAIcomputerPaddles() {
     }
   }
   if (top_difference < 0) { //TOP Calculation
-    if(Math.abs(top_difference)<tolerance){
+    if(Math.abs(top_difference)<tolerance_resolved){
       directions[1]=Math.abs(top_difference/tolerance)
     }
     else{
@@ -441,7 +442,7 @@ function calculateAIcomputerPaddles() {
     }
   }
   else if (top_difference > 0){
-    if(Math.abs(top_difference)<tolerance){
+    if(Math.abs(top_difference)<tolerance_resolved){
       directions[1]=-Math.abs(top_difference/tolerance)
     }
     else{
@@ -450,7 +451,7 @@ function calculateAIcomputerPaddles() {
   }
 
   if (rhs_difference < 0) { //RHS Calculation
-    if(Math.abs(rhs_difference)<tolerance){
+    if(Math.abs(rhs_difference)<tolerance_resolved){
       directions[2]=Math.abs(rhs_difference/tolerance)
     }
     else{
@@ -458,7 +459,7 @@ function calculateAIcomputerPaddles() {
     }
   }
   else if (rhs_difference > 0){
-    if(Math.abs(rhs_difference)<tolerance){
+    if(Math.abs(rhs_difference)<tolerance_resolved){
       directions[2]=-Math.abs(rhs_difference/tolerance)
     }
     else{
@@ -475,7 +476,7 @@ function ballBounds(){
   var corner_1 = [ball_x - 0.5 * ball_size, ball_y + 0.5 * ball_size]
   var corner_2 = [ball_x - 0.5 * ball_size, ball_y - 0.5 * ball_size]
   var corner_3 = [ball_x + 0.5 * ball_size, ball_y - 0.5 * ball_size]
-  var corner_4 = [ball_x - 0.5 * ball_size, ball_y - 0.5 * ball_size]
+  var corner_4 = [ball_x + 0.5 * ball_size, ball_y + 0.5 * ball_size]
 
   result = [corner_1, corner_2, corner_3, corner_4]
 

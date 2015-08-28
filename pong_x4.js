@@ -22,12 +22,15 @@ var rhs_color = "#00a"
 
 var paddle_width = 70
 var paddle_depth = 10
-var paddle_speed = 10
+var paddle_speed = 8
+
+var difficulty_percent = 0.50
+var ai_paddle_speed = paddle_speed * difficulty_percent
 
 var ball_size = 16
 var ball_trajectory = randomDirection()
 var ball_target = []           //x y value for where ball will hit bounds
-var initial_ball_speed = 2
+var initial_ball_speed = 3.5
 var ball_speed = initial_ball_speed
 var ball_acceleration = 0.02
 var ball_color = "#fff"
@@ -311,9 +314,9 @@ function updateBallTarget() {     //after a paddle strike update target position
 function updateComputerPaddles(){
   var paddle_direction = calculateAIcomputerPaddles()
 
-  computer_LHS_y += paddle_direction[0] * paddle_speed
-  computer_TOP_x += paddle_direction[1] * paddle_speed
-  computer_RHS_y += paddle_direction[2] * paddle_speed
+  computer_LHS_y += paddle_direction[0] * ai_paddle_speed
+  computer_TOP_x += paddle_direction[1] * ai_paddle_speed
+  computer_RHS_y += paddle_direction[2] * ai_paddle_speed
 }
 
 
